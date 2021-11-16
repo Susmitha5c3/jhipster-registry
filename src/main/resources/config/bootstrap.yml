@@ -18,13 +18,9 @@ spring:
         bootstrap: true
         fail-on-composite-error: false
         composite:
-          - type: native
-            search-locations: file:./central-config
-          - type: vault
-            kv-version: 2
-            backend: secret
-            default-key: application
-            profile-separator: '/'
+          - type: git
+            uri: https://github.com/Susmitha5c3/jhipster-registry.git
+            search-paths: dev,prod,tls
         vault:
           authentication: token
           host: localhost

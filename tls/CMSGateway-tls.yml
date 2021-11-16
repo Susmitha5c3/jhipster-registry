@@ -1,0 +1,119 @@
+# ===================================================================
+# Activate this profile to enable TLS and HTTP/2.
+#
+# JHipster has generated a self-signed certificate, which will be used to encrypt traffic.
+# As your browser will not understand this certificate, you will need to import it.
+#
+# Another (easiest) solution with Chrome is to enable the "allow-insecure-localhost" flag
+# at chrome://flags/#allow-insecure-localhost
+# ===================================================================
+server:
+  ssl:
+    key-store: classpath:config/tls/keystore.p12
+    key-store-password: password
+    key-store-type: PKCS12
+    key-alias: selfsigned
+    ciphers: TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256, TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384, TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA, TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA, TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384, TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA, TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA
+    enabled-protocols: TLSv1.2
+  http2:
+    enabled: true
+
+
+eureka:
+  instance:
+    appname: cmsgateway
+    instanceId: cmsgateway:${spring.application.instance-id:${random.value}}
+
+management:
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+mongock:
+  change-logs-scan-package:
+    - com.accolitedigital.cms.gateway.config.dbmigrations
+
+spring:
+  application:
+    name: CMSGateway
+  cloud:
+    gateway:
+      default-filters:
+        - TokenRelay
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+          predicates:
+            - name: Path
+              args:
+                pattern: "'/services/'+serviceId.toLowerCase()+'/**'"
+          filters:
+            - name: RewritePath
+              args:
+                regexp: "'/services/' + serviceId.toLowerCase() + '/(?<remaining>.*)'"
+                replacement: "'/${remaining}'"
+      httpclient:
+        pool:
+          max-connections: 1000
+  task:
+    execution:
+      thread-name-prefix: cms-gateway-task-
+      pool:
+        core-size: 2
+        max-size: 50
+        queue-capacity: 10000
+    scheduling:
+      thread-name-prefix: cms-gateway-scheduling-
+      pool:
+        size: 2
+
+
+
+# ===================================================================
+# JHipster specific properties
+#
+# Full reference is available at: https://www.jhipster.tech/common-application-properties/
+# ===================================================================
+
+jhipster:
+  clientApp:
+    name: 'cmsGatewayApp'
+  # By default CORS is disabled. Uncomment to enable.
+  # cors:
+  #   allowed-origins: "http://localhost:8100,http://localhost:9000"
+  #   allowed-methods: "*"
+  #   allowed-headers: "*"
+  #   exposed-headers: "Authorization,Link,X-Total-Count,X-${jhipster.clientApp.name}-alert,X-${jhipster.clientApp.name}-error,X-${jhipster.clientApp.name}-params"
+  #   allow-credentials: true
+  #   max-age: 1800
+  mail:
+    from: CMSGateway@localhost
+  api-docs:
+    default-include-pattern: ${server.servlet.context-path:}/api/.*
+    management-include-pattern: ${server.servlet.context-path:}/management/.*
+    title: CMS Gateway API
+    description: CMS Gateway API documentation
+    version: 0.0.1
+    terms-of-service-url:
+    contact-name:
+    contact-url:
+    contact-email:
+    license: unlicensed
+    license-url:
+  security:
+    content-security-policy: "default-src 'self'; frame-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://storage.googleapis.com; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com data:"
+    oauth2:
+      audience:
+        - account
+        - api://default
+# ===================================================================
+# Application specific properties
+# Add your own application properties here, see the ApplicationProperties class
+# to have type-safe configuration, like in the JHipsterProperties above
+#
+# More documentation is available at:
+# https://www.jhipster.tech/common-application-properties/
+# ===================================================================
+
+# application:
