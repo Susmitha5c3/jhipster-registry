@@ -28,6 +28,8 @@ eureka:
       defaultZone: http://admin:${jhipster.registry.password}@localhost:8761/eureka/
 
 spring:
+  main:
+    allow-bean-definition-overriding: true
   devtools:
     restart:
       enabled: true
