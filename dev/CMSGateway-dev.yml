@@ -23,37 +23,11 @@ logging:
 eureka:
   instance:
     prefer-ip-address: true
-    appname: cmsgateway
-    instanceId: cmsgateway:${spring.application.instance-id:${random.value}}
-    lease-renewal-interval-in-seconds: 5
-    lease-expiration-duration-in-seconds: 10
-    status-page-url-path: ${management.endpoints.web.base-path}/info
-    health-check-url-path: ${management.endpoints.web.base-path}/health
-    metadata-map:
-      zone: primary # This is needed for the load balancer
-      profile: ${spring.profiles.active}
-      version: #project.version#
-      git-version: ${git.commit.id.describe:}
-      git-commit: ${git.commit.id.abbrev:}
-      git-branch: ${git.branch:}
-      context-path: ${server.servlet.context-path:}
   client:
     service-url:
       defaultZone: http://admin:${jhipster.registry.password}@localhost:8761/eureka/
 
-mongock:
-  change-logs-scan-package:
-    - com.accolitedigital.cms.gateway.config.dbmigrations
-
-
-management:
-  metrics:
-    tags:
-      application: ${spring.application.name}
-
 spring:
-  application:
-    name: CMSGateway
   devtools:
     restart:
       enabled: true
@@ -71,36 +45,6 @@ spring:
       profile: dev
       label: main # toggle to switch to a different version of the configuration as stored in git
       # it can be set to any label, branch or commit of the configuration source Git repository
-      gateway:
-        default-filters:
-          - TokenRelay
-        discovery:
-          locator:
-            enabled: true
-            lower-case-service-id: true
-            predicates:
-              - name: Path
-                args:
-                  pattern: "'/services/'+serviceId.toLowerCase()+'/**'"
-            filters:
-              - name: RewritePath
-                args:
-                  regexp: "'/services/' + serviceId.toLowerCase() + '/(?<remaining>.*)'"
-                  replacement: "'/${remaining}'"
-        httpclient:
-          pool:
-            max-connections: 1000
-  task:
-    execution:
-      thread-name-prefix: cms-gateway-task-
-      pool:
-        core-size: 2
-        max-size: 50
-        queue-capacity: 10000
-    scheduling:
-      thread-name-prefix: cms-gateway-scheduling-
-      pool:
-        size: 2
   data:
     mongodb:
       uri: ${CMS_MONGO_URI}
@@ -129,8 +73,6 @@ server:
 # ===================================================================
 
 jhipster:
-  clientApp:
-    name: 'cmsGatewayApp'
   gateway:
     rate-limiting:
       enabled: false
@@ -154,26 +96,6 @@ jhipster:
       host: localhost
       port: 5000
       queue-size: 512
-  mail:
-    from: CMSGateway@localhost
-    api-docs:
-      default-include-pattern: ${server.servlet.context-path:}/api/.*
-      management-include-pattern: ${server.servlet.context-path:}/management/.*
-      title: CMS Gateway API
-      description: CMS Gateway API documentation
-      version: 0.0.1
-      terms-of-service-url:
-      contact-name:
-      contact-url:
-      contact-email:
-      license: unlicensed
-      license-url:
-    security:
-      content-security-policy: "default-src 'self'; frame-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://storage.googleapis.com; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com data:"
-      oauth2:
-        audience:
-          - account
-          - api://default
 # ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class
