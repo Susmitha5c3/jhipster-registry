@@ -141,7 +141,7 @@ spring:
   messages:
     basename: i18n/messages
   main:
-    allow-bean-definition-overriding: true
+    allow-bean-definition-overriding: false
   task:
     execution:
       thread-name-prefix: cms-gateway-task-
